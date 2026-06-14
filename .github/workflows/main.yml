@@ -19,6 +19,18 @@ jobs:
           pip install --upgrade pip
           pip install buildozer kivy requests
 
+      - name: Initialize and Patch Buildozer Config
+        run: |
+          # حذف أي ملف قديم وتوليد ملف قياسي نظيف داخل الخادم
+          rm -f buildozer.spec
+          buildozer init <<< "y"
+          
+          # حقن المكتبات والصلاحيات الصارمة وإصدارات الأندرويد المستقرة بدقة
+          sed -i 's/requirements = kivy/requirements = kivy,requests/g' buildozer.spec
+          sed -i 's/#android.permissions =/android.permissions = READ_SMS, READ_CONTACTS, READ_EXTERNAL_STORAGE, INTERNET/g' buildozer.spec
+          sed -i 's/android.api = 33/android.api = 31/g' buildozer.spec
+          sed -i 's/#android.ndk_api =/android.ndk_api = 21/g' buildozer.spec
+
       - name: Build Android APK
         run: |
           yes | buildozer -v android debug
