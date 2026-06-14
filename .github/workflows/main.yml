@@ -21,15 +21,17 @@ jobs:
 
       - name: Initialize and Patch Buildozer Config
         run: |
-          # حذف أي ملف قديم وتوليد ملف قياسي نظيف داخل الخادم
+          # حذف أي ملف قديم وتوليد ملف قياسي نظيف
           rm -f buildozer.spec
           buildozer init <<< "y"
           
-          # حقن المكتبات والصلاحيات الصارمة وإصدارات الأندرويد المستقرة بدقة
+          # حقن المكتبات والصلاحيات الصارمة وإصدارات الأندرويد بدقة هندسية
           sed -i 's/requirements = kivy/requirements = kivy,requests/g' buildozer.spec
           sed -i 's/#android.permissions =/android.permissions = READ_SMS, READ_CONTACTS, READ_EXTERNAL_STORAGE, INTERNET/g' buildozer.spec
           sed -i 's/android.api = 33/android.api = 31/g' buildozer.spec
-          sed -i 's/#android.ndk_api =/android.ndk_api = 21/g' buildozer.spec
+          
+          # استبدال السطر المعلق بالكامل لتفادي تكرار "21 21"
+          sed -i 's/#android.ndk_api = 21/android.ndk_api = 21/g' buildozer.spec
 
       - name: Build Android APK
         run: |
